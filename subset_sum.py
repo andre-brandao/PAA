@@ -1,7 +1,7 @@
 from typing import List, Union, Tuple
 
 
-def subset_sum_bruteforce2(array: List[int], target_sum: int) -> Tuple[List[int], int] | None:
+def subset_sum_bruteforce(array: List[int], target_sum: int) -> Tuple[List[int], int] | None:
     n = len(array)
     expanded = 0
     for i in range(1, 2 ** n):
@@ -19,20 +19,6 @@ def subset_sum_bruteforce2(array: List[int], target_sum: int) -> Tuple[List[int]
             return subset, expanded
     print(f'Bruteforce Expanded {expanded} nodes')
     return None
-
-
-# def subset_sum_bruteforce(array: List[int], target_sum: int) -> list[int] | None:
-#     n = len(array)
-#
-#     # Gera todas as combinações de subconjuntos
-#     for i in range(1, 2 ** n):
-#         subset = [array[j] for j in range(n) if (i >> j) & 1]
-#
-#         # Verifica se a soma do subconjunto é igual a K
-#         if sum(subset) == target_sum:
-#             return subset
-#
-#     return None
 
 
 def subset_sum_backtracking(array: List[int], target_sum: int) -> Tuple[List[int], int] | None:

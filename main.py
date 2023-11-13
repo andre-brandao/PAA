@@ -6,10 +6,10 @@ import pandas as pd
 import time
 import pytest
 
-from subset_sum import subset_sum_backtracking, subset_sum_bruteforce2
+from subset_sum import subset_sum_backtracking, subset_sum_bruteforce
 
 # Define the maximum timeout value
-timeoutMAX = 2
+timeoutMAX = 10
 
 test_data = [
     ([1, 2, 3, 4, 5], 10),
@@ -21,10 +21,51 @@ test_data = [
     (random.sample(range(1, 501), 500), 567),
     (random.sample(range(1, 1001), 1000), 123),
     (random.sample(range(1, 1001), 1000), 1234),
-    (random.sample(range(1, 10001), 10000), 12345)
+    (random.sample(range(1, 10001), 10000), 12345),
+]
+#Teste para tamanho de amostra (com K sendo 1/2 do valor maximo)
+test_data_length_sample_low_sum = [
+    (random.sample(range(1, 11), 10), 20),
+    (random.sample(range(1, 51), 50), 100),
+    (random.sample(range(1, 101), 100), 200),
+    (random.sample(range(1, 201), 200), 400),
+    (random.sample(range(1, 501), 500), 1000),
+    (random.sample(range(1, 1001), 1000), 2000),
+    (random.sample(range(1, 10001), 10000), 20000)
 ]
 
+#Teste para tamanho de amostra (com K sendo 2x do valor maximo)
+test_data_length_sample_high_sum = [
+    (random.sample(range(1, 11), 10), 20),
+    (random.sample(range(1, 51), 50), 100),
+    (random.sample(range(1, 101), 100), 200),
+    (random.sample(range(1, 201), 200), 400),
+    (random.sample(range(1, 501), 500), 1000),
+    (random.sample(range(1, 1001), 1000), 2000),
+    (random.sample(range(1, 10001), 10000), 20000)
+]
 
+#Teste para valor de K com tamanho de amostra pequena
+test_data_value_sum_low_length_sample = [
+    (random.sample(range(1, 51), 50), 1),
+    (random.sample(range(1, 51), 50), 10),
+    (random.sample(range(1, 51), 50), 50),
+    (random.sample(range(1, 51), 50), 100),
+    (random.sample(range(1, 51), 50), 500),
+    (random.sample(range(1, 51), 50), 1000),
+    (random.sample(range(1, 51), 50), 1275)
+]
+
+#Teste para valor de K com tamanho de amostra grande
+test_data_value_sum_high_length_sample = [
+    (random.sample(range(1, 5001), 5000), 1),
+    (random.sample(range(1, 5001), 5000), 10),
+    (random.sample(range(1, 5001), 5000), 100),
+    (random.sample(range(1, 5001), 5000), 1000),
+    (random.sample(range(1, 5001), 5000), 100000),
+    (random.sample(range(1, 5001), 5000), 10000000),
+    (random.sample(range(1, 5001), 5000), 12502500)
+]
 def print_test_result(array, target_sum, result, elapsed_time, method):
     print(f'Test Data: array={array}, target_sum={target_sum}')
     if result is not None:
@@ -37,7 +78,7 @@ def print_test_result(array, target_sum, result, elapsed_time, method):
 @timeout_decorator.timeout(timeoutMAX)
 def run_bruteforce(array, target_sum):
     start_time_bruteforce = time.time()
-    subset, expanded = subset_sum_bruteforce2(array, target_sum)
+    subset, expanded = subset_sum_bruteforce(array, target_sum)
     elapsed_time_bruteforce = time.time() - start_time_bruteforce
     return subset, expanded, elapsed_time_bruteforce
 
@@ -98,7 +139,7 @@ def tests_and_plot():
 
     x_labels = []
 
-    for array, target_sum in test_data:
+    for array, target_sum in test_data_value_sum_high_length_sample:
         result_bruteforce = None
         result_backtracking = None
         elapsed_time_backtracking = 0
@@ -110,6 +151,9 @@ def tests_and_plot():
             result_backtracking, expanded_backtracking, elapsed_time_backtracking = run_backtracking(array, target_sum)
         except timeout_decorator.TimeoutError:
             print(f'Backtracking Timed Out')
+            pass
+        except RecursionError:
+            print(f'Backtracking Recursion Error')
             pass
 
         try:
