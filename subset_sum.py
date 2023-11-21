@@ -7,9 +7,9 @@ def subset_sum_bruteforce(array: List[int], target_sum: int) -> Tuple[List[int],
     for i in range(1, 2 ** n):
         subset = []
         subset_sum = 0
-
+        expanded += 1
         for j in range(n):
-            expanded += 1
+
             if (i >> j) & 1:
                 subset.append(array[j])
                 subset_sum += array[j]

@@ -7,7 +7,7 @@ import time
 import pytest
 
 from subset_sum import subset_sum_backtracking, subset_sum_bruteforce
-
+from increasing_sequence import maxIncreasing
 # Define the maximum timeout value
 timeoutMAX = 10
 
@@ -23,17 +23,17 @@ test_data = [
     (random.sample(range(1, 1001), 1000), 1234),
     (random.sample(range(1, 10001), 10000), 12345),
 ]
+
 #Teste para tamanho de amostra (com K sendo 1/2 do valor maximo)
 test_data_length_sample_low_sum = [
-    (random.sample(range(1, 11), 10), 20),
-    (random.sample(range(1, 51), 50), 100),
-    (random.sample(range(1, 101), 100), 200),
-    (random.sample(range(1, 201), 200), 400),
-    (random.sample(range(1, 501), 500), 1000),
-    (random.sample(range(1, 1001), 1000), 2000),
-    (random.sample(range(1, 10001), 10000), 20000)
+    (random.sample(range(1, 11), 10), 5),
+    (random.sample(range(1, 51), 50), 25),
+    (random.sample(range(1, 101), 100), 50),
+    (random.sample(range(1, 201), 200), 100),
+    (random.sample(range(1, 501), 500), 250),
+    (random.sample(range(1, 1001), 1000), 500),
+    (random.sample(range(1, 10001), 10000), 5000)
 ]
-
 #Teste para tamanho de amostra (com K sendo 2x do valor maximo)
 test_data_length_sample_high_sum = [
     (random.sample(range(1, 11), 10), 20),
@@ -66,6 +66,26 @@ test_data_value_sum_high_length_sample = [
     (random.sample(range(1, 5001), 5000), 10000000),
     (random.sample(range(1, 5001), 5000), 12502500)
 ]
+
+#Teste para valor de K com tamanho de amostra médio
+test_data_value_sum_medium_length_sample = [
+    (random.sample(range(1, 1001), 1000), 1),
+    (random.sample(range(1, 1001), 1000), 10),
+    (random.sample(range(1, 1001), 1000), 100),
+    (random.sample(range(1, 1001), 1000), 1000),
+    (random.sample(range(1, 1001), 1000), 10000),
+    (random.sample(range(1, 1001), 1000), 100000),
+    (random.sample(range(1, 1001), 1000), 500500)
+]
+
+
+
+test_data_paa2 = [
+    (range(1, 100)),
+    (range(1, 1000)),
+    (random.sample(range(1, 100), 100)),
+
+]
 def print_test_result(array, target_sum, result, elapsed_time, method):
     print(f'Test Data: array={array}, target_sum={target_sum}')
     if result is not None:
@@ -89,6 +109,13 @@ def run_backtracking(array, target_sum):
     subset, expanded = subset_sum_backtracking(array, target_sum)
     elapsed_time_backtracking = time.time() - start_time_backtracking
     return subset, expanded, elapsed_time_backtracking
+
+@timeout_decorator.timeout(timeoutMAX)
+def run_divide_and_conquer(array):
+    start_time_divide_and_conquer = time.time()
+    result = maxIncreasing(array)
+    elapsed_time_divide_and_conquer = time.time() - start_time_divide_and_conquer
+    return result, elapsed_time_divide_and_conquer
 
 
 def plot_execution_times(x_labels, bruteforce_times, backtracking_times, bruteforce_expanded, backtracking_expanded):
@@ -139,7 +166,7 @@ def tests_and_plot():
 
     x_labels = []
 
-    for array, target_sum in test_data_value_sum_high_length_sample:
+    for array, target_sum in test_data_value_sum_medium_length_sample:
         result_bruteforce = None
         result_backtracking = None
         elapsed_time_backtracking = 0
