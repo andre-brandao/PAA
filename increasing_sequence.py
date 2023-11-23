@@ -1,10 +1,10 @@
-def maior_subsequencia_divisao_conquista(arr):
+def maior_subsequencia_array_walk(arr):
     maxLength = 1
     maxStart = 0
     curStart = 0
     curLength = 1
     for i in range(1, len(arr)):
-        if arr[i] <= arr[i-1]:
+        if arr[i] <= arr[i - 1]:
             if curLength > maxLength:
                 maxLength = curLength
                 maxStart = curStart
@@ -16,6 +16,39 @@ def maior_subsequencia_divisao_conquista(arr):
         maxLength = curLength
         maxStart = curStart
     return (maxLength, maxStart)
+
+
+def maior_subsequencia_crescente_contigua_divide_conquer(arr):
+    def merge(left, right):
+        merged = []
+        i = j = 0
+
+        while i < len(left) and j < len(right):
+            if right[j] == left[i] + 1:
+                while j < len(right) and right[j] == left[i] + 1:
+                    merged.append(left[i])
+                    i += 1
+                    j += 1
+            elif left[i] < right[j]:
+                i += 1
+            else:
+                j += 1
+
+        return merged
+
+    def divide_and_conquer(arr):
+        if len(arr) <= 1:
+            return arr
+
+        mid = len(arr) // 2
+        left = divide_and_conquer(arr[:mid])
+        right = divide_and_conquer(arr[mid:])
+
+        return merge(left, right)
+
+    result = divide_and_conquer(arr)
+    return result
+
 
 
 
