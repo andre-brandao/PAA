@@ -7,7 +7,7 @@ import time
 import pytest
 
 from subset_sum import subset_sum_backtracking, subset_sum_bruteforce
-from increasing_sequence import maxIncreasing
+from increasing_sequence import maior_subsequencia_divisao_conquista
 # Define the maximum timeout value
 timeoutMAX = 10
 
@@ -113,7 +113,7 @@ def run_backtracking(array, target_sum):
 @timeout_decorator.timeout(timeoutMAX)
 def run_divide_and_conquer(array):
     start_time_divide_and_conquer = time.time()
-    result = maxIncreasing(array)
+    result = maior_subsequencia_divisao_conquista(array)
     elapsed_time_divide_and_conquer = time.time() - start_time_divide_and_conquer
     return result, elapsed_time_divide_and_conquer
 

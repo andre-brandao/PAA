@@ -6,12 +6,11 @@ import pandas as pd
 import time
 import pytest
 
+from increasing_sequence import maior_subsequencia_divisao_conquista, maior_subsequencia_crescente_contigua_forca_bruta, \
+    maior_subsequencia_crescente_gulosa
 
-from increasing_sequence import maxIncreasing
 # Define the maximum timeout value
 timeoutMAX = 10
-
-
 
 test_data_paa2 = [
     (range(1, 100)),
@@ -20,20 +19,92 @@ test_data_paa2 = [
     (range(1, 1000000000)),
     (random.sample(range(1, 101), 100)),
     (random.sample(range(1, 1000001), 1000000)),
+    (random.sample(range(1, 101), 100) + list(range(1, 100))),
+    (random.sample(range(1, 1000001), 1000000) + list(range(1, 1000001))),
+    (random.sample(range(1, 101), 100) + list(range(1, 100)) + list(range(1, 100)) + random.sample(range(1, 101), 100)),
+    (random.sample(range(1, 1000001), 1000000) + list(range(1, 1000001)) + list(range(1, 1000001)) + random.sample(
+        range(1, 1000001), 1000000)),
 
 ]
 
+test_data_random = [
+    (random.sample(range(1, 101), 100)),
+    (random.sample(range(1, 1001), 1000)),
+    (random.sample(range(1, 5001), 5000)),
+    (random.sample(range(1, 10001), 10000)),
+    (random.sample(range(1, 50001), 50000)),
+    (random.sample(range(1, 100001), 100000)),
+    (random.sample(range(1, 1000001), 1000000)),
+
+]
+
+
+test_data_range =[
+    (range(1, 101)),
+    (range(1, 1001)),
+    (range(1, 5001)),
+    (range(1, 10001)),
+    (range(1, 50001)),
+    (range(1, 1000001)),
+
+    (range(1, 1000000001)),
+
+]
+
+test_data_random_list_midle = [
+    (random.sample(range(1, 101), 100) + list(range(1, 100)) + random.sample(range(1, 101), 100)),
+    (random.sample(range(1, 1001), 1000) + list(range(1, 1001)) + random.sample(range(1, 1001), 1000)),
+    (random.sample(range(1, 5001), 5000) + list(range(1, 5001)) + random.sample(range(1, 5001), 5000)),
+    (random.sample(range(1, 10001), 10000) + list(range(1, 10001)) + random.sample(range(1, 10001), 10000)),
+    (random.sample(range(1, 50001), 50000) + list(range(1, 50001)) + random.sample(range(1, 50001), 50000)),
+    (random.sample(range(1, 1000001), 1000000) + list(range(1, 1000001)) + random.sample(range(1, 1000001), 1000000)),
+]
+
+test_data_random_list_start = [
+    (list(range(1, 100)) + random.sample(range(1, 101), 100)),
+    (list(range(1, 1000)) + random.sample(range(1, 1001), 1000)),
+    (list(range(1, 5000)) + random.sample(range(1, 10001), 5000)),
+    (list(range(1, 10001)) + random.sample(range(1, 10001), 10000)),
+    (list(range(1, 50001)) + random.sample(range(1, 50001), 50000)),
+    (list(range(1, 1000001)) + random.sample(range(1, 1000001), 1000000)),
+
+]
+
+test_data_random_list_end = [
+    (random.sample(range(1, 101), 100) + list(range(1, 100))),
+    (random.sample(range(1, 1001), 1000) + list(range(1, 1001))),
+    (random.sample(range(1, 5001), 5000) + list(range(1, 5001))),
+    (random.sample(range(1, 10001), 10000) + list(range(1, 10001))),
+    (random.sample(range(1, 50001), 50000) + list(range(1, 50001))),
+    (random.sample(range(1, 1000001), 1000000) + list(range(1, 1000001))),
+]
 @timeout_decorator.timeout(timeoutMAX)
 def run_divide_and_conquer(array):
     start_time_divide_and_conquer = time.time()
-    # Replace this line with your actual divide and conquer algorithm
-    result = maxIncreasing(array)
+    result = maior_subsequencia_divisao_conquista(array)
     elapsed_time_divide_and_conquer = time.time() - start_time_divide_and_conquer
     return result, elapsed_time_divide_and_conquer
 
-def plot_execution_times(x_labels, divide_and_conquer_times):
+
+@timeout_decorator.timeout(timeoutMAX)
+def run_greedy(array):
+    start_time_greedy = time.time()
+    result = maior_subsequencia_crescente_gulosa(array)
+    elapsed_time_greedy = time.time() - start_time_greedy
+    return result, elapsed_time_greedy
+
+
+@timeout_decorator.timeout(timeoutMAX)
+def run_bruteforce(array):
+    start_time_bruteforce = time.time()
+    result = maior_subsequencia_crescente_contigua_forca_bruta(array)
+    elapsed_time_bruteforce = time.time() - start_time_bruteforce
+    return result, elapsed_time_bruteforce
+
+
+def plot_execution_times(x_labels, divide_and_conquer_times, greedy_times, bruteforce_times):
     # Scale the data using Pandas for the y-axis
-    df = pd.DataFrame({'Divide and Conquer': divide_and_conquer_times})
+    df = pd.DataFrame({'Divide and Conquer': divide_and_conquer_times, 'Greedy': greedy_times, 'Bruteforce': bruteforce_times})
 
     # Plot the execution times
     fig, ax = plt.subplots(figsize=(10, 8))
@@ -42,6 +113,8 @@ def plot_execution_times(x_labels, divide_and_conquer_times):
     plt.yscale('log')
 
     plt.plot(x_labels, df['Divide and Conquer'], label='Divide and Conquer', marker='o')
+    plt.plot(x_labels, df['Greedy'], label='Greedy', marker='o')
+    plt.plot(x_labels, df['Bruteforce'], label='Bruteforce', marker='o')
     plt.xlabel('Test Case')
     plt.ylabel('Execution Time (seconds)')
     plt.title('Execution Time Comparison')
@@ -56,25 +129,44 @@ def plot_execution_times(x_labels, divide_and_conquer_times):
         return f"{value:.6f}"
 
     ax.yaxis.set_major_formatter(FuncFormatter(format_func))
-    for i, (x, y_divide_and_conquer) in enumerate(
-            zip(x_labels, df['Divide and Conquer'])):
-        plt.annotate(f'Time: {y_divide_and_conquer:.6f}', (x, y_divide_and_conquer),
-                     xytext=(5, 15), textcoords='offset points', fontsize=8, fontweight='bold', color='blue',
+    for i, (x, y_divide_and_conquer, y_greedy, y_bruteforce) in enumerate(
+            zip(x_labels, df['Divide and Conquer'], df['Greedy'], df['Bruteforce'])):
+        # Annotate for Divide and Conquer
+        plt.annotate(f'DC: {y_divide_and_conquer:.6f}', (x, y_divide_and_conquer),
+                     xytext=(5, -25), textcoords='offset points', fontsize=8, fontweight='bold', color='blue',
                      bbox=dict(boxstyle='round,pad=0.5', fc='green', alpha=0.5),
                      arrowprops=dict(arrowstyle='->', color='blue'))
+
+        # Annotate for Greedy
+        plt.annotate(f'Greedy: {y_greedy:.6f}', (x, y_greedy),
+                     xytext=(5, -10), textcoords='offset points', fontsize=8, fontweight='bold', color='orange',
+                     bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.5),
+                     arrowprops=dict(arrowstyle='->', color='orange'))
+
+        # Annotate for Bruteforce
+        plt.annotate(f'Bruteforce: {y_bruteforce:.6f}', (x, y_bruteforce),
+                     xytext=(0, 15), textcoords='offset points', fontsize=8, fontweight='bold', color='green',
+                     bbox=dict(boxstyle='round,pad=0.5', fc='pink', alpha=0.5),
+                     arrowprops=dict(arrowstyle='->', color='red'))
 
     plt.tight_layout()
     plt.show()
 
+
 def tests_and_plot():
     divide_and_conquer_times = []
+    greedy_times = []
+    bruteforce_times = []
 
     x_labels = []
 
-    for array in test_data_paa2:
+    for array in test_data_random_list_end:
         result_divide_and_conquer = None
         elapsed_time_divide_and_conquer = 0
-        expanded_divide_and_conquer = None
+        result_greedy = None
+        elapsed_time_greedy = 0
+        result_bruteforce = None
+        elapsed_time_bruteforce = 0
 
         try:
             result_divide_and_conquer, elapsed_time_divide_and_conquer = run_divide_and_conquer(array)
@@ -83,14 +175,29 @@ def tests_and_plot():
             print(f'Divide and Conquer Timed Out')
             pass
 
+        try:
+            result_greedy, elapsed_time_greedy = run_greedy(array)
+        except timeout_decorator.TimeoutError:
+            print(f'Greedy Timed Out')
+            pass
+
+        try:
+            result_bruteforce, elapsed_time_bruteforce = run_bruteforce(array)
+        except timeout_decorator.TimeoutError:
+            print(f'Bruteforce Timed Out')
+            pass
+
         print('\n' + '=' * 30)
         print_test_result(array, result_divide_and_conquer, elapsed_time_divide_and_conquer,
                           'Divide and Conquer')
 
         divide_and_conquer_times.append(elapsed_time_divide_and_conquer)
+        greedy_times.append(elapsed_time_greedy)
+        bruteforce_times.append(elapsed_time_bruteforce)
+
         x_labels.append(f"Array Size = {len(array)}\n")
 
-    plot_execution_times(x_labels, divide_and_conquer_times)
+    plot_execution_times(x_labels, divide_and_conquer_times, greedy_times, bruteforce_times)
 
 
 def print_test_result(array, result, elapsed_time, method):
@@ -100,6 +207,7 @@ def print_test_result(array, result, elapsed_time, method):
         print(f'{method} Execution Time: {elapsed_time:.8f} seconds')
     else:
         print(f'{method} Timed Out')
+
 
 if __name__ == "__main__":
     tests_and_plot()
